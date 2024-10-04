@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insect Identifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+        h2 {
+            color: #333;
+        }
+        .suggestion, .pesticide {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 5px solid #4CAF50; /* Green color */
+            background-color: #f9f9f9;
+        }
+        .pesticide {
+            border-left-color: #2196F3; /* Blue color */
+        }
+        img {
+            max-width: 300px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Insect Identifier</h1>
+    <form id="uploadForm">
+        <input type="file" id="imageInput" accept="image/*" required>
+        <button type="submit">Upload Image</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData();
+            const imageInput = document.getElementById('imageInput');
+
+            // Append the selected file to the FormData object
+            formData.append('image', imageInput.files[0]);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+
+                // Display the best suggestion
+                if (data.success && data.data.best_suggestion) {
+                    const bestSuggestion = data.data.best_suggestion;
+
+                    // Clean the recommended products string before parsing
+                    const cleanedProductsString = data.data.pesticide_recommendation.recommended_products
+                        .replace(/```json/g, '')
+                        .replace(/```/g, '')
+                        .trim();
+
+                    // Parse the cleaned string into JSON
+                    const pesticideRecommendation = JSON.parse(cleanedProductsString);
+
+                    document.getElementById('result').innerHTML = `
+                        <div class="suggestion">
+                            <h2>Captured pest class:</h2>
+                            <p><strong>Class Name:</strong> ${bestSuggestion.name}</p>
+                        </div>
+                        <div class="pesticide">
+                            <h2>Pesticide Recommendations:</h2>
+                            <ul>
+                                ${pesticideRecommendation.map(product => `
+                                    <li>
+                                        <strong>${product.name}</strong>: ${product.description}
+                                    </li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('result').innerHTML = `<p>No suggestions found.</p>`;
+                }
+
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                document.getElementById('result').innerHTML = `<p>Error uploading image. Please try again.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
