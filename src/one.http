@@ -1,0 +1,21 @@
+POST https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyBTa02q-ljU5g2id_5Coy6YDeGrlAJ21OM
+Key: Content-Type
+Value: application/json
+
+{
+  "contents": [
+    {
+      "parts": [
+        {
+          "text": "Explain how AI works"
+        }
+      ]
+    }
+  ]
+}
+
+
+
+###
+## GET /
+GET http://localhost:3000/one

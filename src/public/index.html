@@ -3,112 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insect Identifier</title>
+    <title>Pest Control - Insect Identification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* Reset */
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
+            padding: 0;
+            box-sizing: border-box;
         }
-        form {
-            margin-bottom: 20px;
-        }
-        input[type="file"] {
-            margin-bottom: 10px;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 5px;
-        }
-        h2 {
+
+        /* General Body Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f3f6f9;
             color: #333;
         }
-        .suggestion, .pesticide {
+
+        /* Full-screen Section Styling */
+        section {
+            width: 100%;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* Hero Section */
+        #hero {
+            background: linear-gradient(135deg, #0065ff, #1ec6ff);
+            color: white;
+            padding-top: 60px;
+            min-height: 50vh;
+        }
+
+        #hero h1 {
+            font-size: 2.8em;
+            margin-bottom: 0.4em;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        #hero p {
+            font-size: 1.1em;
+            max-width: 600px;
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out forwards;
+        }
+
+        /* Upload Section */
+        #upload {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            max-width: 600px;
+            padding: 40px;
+            margin-top: -20px;
+            z-index: 10;
+            text-align: center;
+        }
+
+        #upload h2 {
+            color: #007bff;
+            font-size: 1.8em;
             margin-bottom: 15px;
-            padding: 10px;
-            border-left: 5px solid #4CAF50; /* Green color */
-            background-color: #f9f9f9;
         }
-        .pesticide {
-            border-left-color: #2196F3; /* Blue color */
+
+        #upload input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border 0.3s ease;
         }
-        img {
-            max-width: 300px;
-            border-radius: 5px;
+
+        #upload input[type="file"]:hover {
+            border-color: #007bff;
+        }
+
+        #upload button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        #upload button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Loader Animation */
+        .loader {
+            display: none;
+            border: 4px solid #f4f7fa;
+            border-top-color: #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+            margin-top: 20px;
+        }
+
+        /* Result Section */
+        #result {
+            display: none;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 600px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        #result h2 {
+            color: #007bff;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .pesticide-card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px auto;
+            box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .pesticide-card:hover {
+            transform: scale(1.02);
+        }
+
+        .pesticide-card h3 {
+            margin-bottom: 8px;
+        }
+
+        .pesticide-card p {
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        /* Keyframes for Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <h1>Insect Identifier</h1>
-    <form id="uploadForm">
-        <input type="file" id="imageInput" accept="image/*" required>
-        <button type="submit">Upload Image</button>
-    </form>
-    <div id="result"></div>
+    <!-- Hero Section -->
+    <section id="hero">
+        <h1>Welcome to Pest Control</h1>
+        <p>Identify pests and find effective solutions. Just upload an image, and we’ll handle the rest!</p>
+    </section>
 
+    <!-- Upload Section -->
+    <section id="upload">
+        <h2>Identify an Insect</h2>
+        <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Upload and Identify</button>
+        </form>
+        <div class="loader" id="loader"></div>
+    </section>
+
+    <!-- Result Section -->
+    <section id="result">
+        <h2>Identification Result</h2>
+        <div id="insectDetails"></div>
+        <h3>Pesticide Recommendations</h3>
+        <div id="pesticideRecommendations"></div>
+    </section>
+
+    <!-- JavaScript for Form Submission with Loader Animation -->
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
-            
-            const formData = new FormData();
-            const imageInput = document.getElementById('imageInput');
+        const form = document.getElementById('uploadForm');
+const loader = document.getElementById('loader');
+const resultSection = document.getElementById('result');
+const insectDetailsDiv = document.getElementById('insectDetails');
+const pesticideRecommendationsDiv = document.getElementById('pesticideRecommendations');
 
-            // Append the selected file to the FormData object
-            formData.append('image', imageInput.files[0]);
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
+    // Show loader
+    loader.style.display = 'block';
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+    // Reset result section
+    resultSection.style.display = 'none';
+    insectDetailsDiv.innerHTML = '';
+    pesticideRecommendationsDiv.innerHTML = '';
 
-                const data = await response.json();
+    const formData = new FormData(form);
+    try {
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        });
 
-                // Display the best suggestion
-                if (data.success && data.data.best_suggestion) {
-                    const bestSuggestion = data.data.best_suggestion;
+        loader.style.display = 'none';
 
-                    // Clean the recommended products string before parsing
-                    const cleanedProductsString = data.data.pesticide_recommendation.recommended_products
-                        .replace(/```json/g, '')
-                        .replace(/```/g, '')
-                        .trim();
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Display insect details
+                insectDetailsDiv.innerHTML = `
+                    <p><strong>Insect Class Name:</strong> ${data.data.best_suggestion.name}</p>
+                `;
 
-                    // Parse the cleaned string into JSON
-                    const pesticideRecommendation = JSON.parse(cleanedProductsString);
+                // Correctly parse the recommended products
+                const recommendedProductsStr = data.data.pesticide_recommendation.recommended_products;
+                const recommendedProducts = JSON.parse(recommendedProductsStr.replace(/```json\n|\n```/g, ''));
 
-                    document.getElementById('result').innerHTML = `
-                        <div class="suggestion">
-                            <h2>Captured pest class:</h2>
-                            <p><strong>Class Name:</strong> ${bestSuggestion.name}</p>
-                        </div>
-                        <div class="pesticide">
-                            <h2>Pesticide Recommendations:</h2>
-                            <ul>
-                                ${pesticideRecommendation.map(product => `
-                                    <li>
-                                        <strong>${product.name}</strong>: ${product.description}
-                                    </li>`).join('')}
-                            </ul>
+                recommendedProducts.forEach(product => {
+                    pesticideRecommendationsDiv.innerHTML += `
+                        <div class="pesticide-card">
+                            <h3>${product.name}</h3>
+                            <p>${product.description}</p>
                         </div>
                     `;
-                } else {
-                    document.getElementById('result').innerHTML = `<p>No suggestions found.</p>`;
-                }
+                });
 
-            } catch (error) {
-                console.error('Error uploading image:', error);
-                document.getElementById('result').innerHTML = `<p>Error uploading image. Please try again.</p>`;
+                resultSection.style.display = 'block';
+            } else {
+                alert('Identification failed. Try again.');
             }
-        });
+        } else {
+            alert('Error processing image. Please try again.');
+        }
+    } catch (error) {
+        loader.style.display = 'none';
+        alert('Network error. Please check your connection.');
+    }
+});
+
     </script>
 </body>
 </html>
