@@ -214,7 +214,7 @@ function getPestInfo(detectedLabel: string): {
     isPest: false,
     pesticide: 'Not applicable',
     applicationMethod: 'N/A',
-    message: 'This does not appear to be a common pest. If you suspect it\'s harmful, consult a local expert.'
+    message: 'This does not appear to be a pest.'
   }
 }
 
